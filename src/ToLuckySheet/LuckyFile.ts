@@ -20,13 +20,14 @@ export class LuckyFile extends LuckyFileBase {
 
     constructor(files:IuploadfileList, fileName:string) {
         super();
-        this.files = files;
+        // this.files = files;   // 去除
         this.fileName = fileName;
         this.readXml = new ReadXml(files);
         this.getSheetNameList();
 
         this.sharedStrings = this.readXml.getElementsByTagName("sst/si", sharedStringsFile);
-        this.calcChain = this.readXml.getElementsByTagName("calcChain/c", calcChainFile);
+        // this.calcChain = this.readXml.getElementsByTagName("calcChain/c", calcChainFile);
+        this.calcChain = []   // 改动点: 去除公式，只读模式不用公式
         this.styles = {};
         this.styles["cellXfs"] =  this.readXml.getElementsByTagName("cellXfs/xf", stylesFile);
         this.styles["cellStyleXfs"] =  this.readXml.getElementsByTagName("cellStyleXfs/xf", stylesFile);
@@ -287,9 +288,9 @@ export class LuckyFile extends LuckyFileBase {
 
             cy_n = cy_n + toRowOff - y_n;
 
-            console.log(defaultColWidth, colhidden , columnlen);
-            console.log(fromCol, this.columnWidthSet[fromCol] , fromColOff);
-            console.log(toCol, this.columnWidthSet[toCol] , toColOff, JSON.stringify(this.columnWidthSet));
+            // console.log(defaultColWidth, colhidden , columnlen);
+            // console.log(fromCol, this.columnWidthSet[fromCol] , fromColOff);
+            // console.log(toCol, this.columnWidthSet[toCol] , toColOff, JSON.stringify(this.columnWidthSet));
 
             imageObject.originWidth = cx_n;
             imageObject.originHeight = cy_n;
@@ -353,7 +354,7 @@ export class LuckyFile extends LuckyFileBase {
     /**
     * @return LuckySheet file json
     */
-    Parse():string{
+    Parse(){
         // let xml = this.readXml;
         // for(let key in this.sheetNameList){
         //     let sheetName=this.sheetNameList[key];
@@ -385,10 +386,13 @@ export class LuckyFile extends LuckyFileBase {
         //         sheet.config.borderInfo.push(b);
         //     }
         // }
-
-        return this.toJsonString(this);
+        // return this.toJsonString(this);  改动点: 原代码要转换，现在不转换
+        return {
+            info: this.info,
+            sheets: this.sheets
+        };
     }
-
+    /** 9M的文件，转换会报错超出长度，所以不使用这个转换，Invalid string length */
     private toJsonString(file:ILuckyFile):string{
         let LuckyOutPutFile = new LuckyFileBase();
         LuckyOutPutFile.info = file.info;

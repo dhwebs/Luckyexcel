@@ -32,7 +32,8 @@ export class LuckySheet extends LuckySheetBase {
         this.sheetFile = allFileOption.sheetFile;
         this.styles = allFileOption.styles;
         this.sharedStrings = allFileOption.sharedStrings;
-        this.calcChainEles = allFileOption.calcChain;
+        // this.calcChainEles = allFileOption.calcChain; 改动点: 去除公式
+        this.calcChainEles = [];
         this.sheetList = allFileOption.sheetList;
         this.imageList = allFileOption.imageList;
         this.hide = allFileOption.hide;
@@ -87,7 +88,7 @@ export class LuckySheet extends LuckySheetBase {
 
 
         this.generateConfigColumnLenAndHidden();
-        let cellOtherInfo:IcellOtherInfo =  this.generateConfigRowLenAndHiddenAddCell();
+        let cellOtherInfo:IcellOtherInfo = this.generateConfigRowLenAndHiddenAddCell();
         
         if(this.calcChain==null){
             this.calcChain = [];
@@ -176,13 +177,14 @@ export class LuckySheet extends LuckySheetBase {
         }
       
         // dataVerification config
-        this.dataVerification = this.generateConfigDataValidations();
+        /** 改动点: 注释 数据校验，只读模式不用校验 */
+        // this.dataVerification = this.generateConfigDataValidations();
 
         // hyperlink config
         this.hyperlink = this.generateConfigHyperlinks();
       
         // sheet hide
-        this.hide = this.hide;
+        // this.hide = this.hide;
 
         if(this.mergeCells!=null){
             for(let i=0;i<this.mergeCells.length;i++){
@@ -392,9 +394,6 @@ export class LuckySheet extends LuckySheetBase {
     */
     private generateConfigRowLenAndHiddenAddCell():IcellOtherInfo{
         let rows = this.readXml.getElementsByTagName("sheetData/row", this.sheetFile);
-        let cellOtherInfo:IcellOtherInfo = {};
-        let formulaList:IformulaList = {};
-        cellOtherInfo.formulaList = formulaList;
         for(let i=0;i<rows.length;i++){
             let row = rows[i], attrList = row.attributeList;
             let rowNo = getXmlAttibute(attrList, "r", null);
@@ -504,53 +503,54 @@ export class LuckySheet extends LuckySheetBase {
 
                     //     }
                     // }
-                    if(cellValue._formulaType=="shared"){
-                        if(this.formulaRefList==null){
-                            this.formulaRefList = {};
-                        }
+                    // 改动点: 去除公式，只读模式不用公式
+                    // if(cellValue._formulaType=="shared"){
+                    //     if(this.formulaRefList==null){
+                    //         this.formulaRefList = {};
+                    //     }
 
-                        if(this.formulaRefList[cellValue._formulaSi]==null){
-                            this.formulaRefList[cellValue._formulaSi] = {}
-                        }
+                    //     if(this.formulaRefList[cellValue._formulaSi]==null){
+                    //         this.formulaRefList[cellValue._formulaSi] = {}
+                    //     }
 
-                        let fv;
-                        if(cellValue.v!=null){
-                            fv = (cellValue.v as IluckySheetCelldataValue).f;
-                        }
+                    //     let fv;
+                    //     if(cellValue.v!=null){
+                    //         fv = (cellValue.v as IluckySheetCelldataValue).f;
+                    //     }
 
-                        let refValue = {
-                            t:cellValue._formulaType,
-                            ref:cellValue._fomulaRef,
-                            si:cellValue._formulaSi,
-                            fv:fv,
-                            cellValue:cellValue
-                        }
+                    //     let refValue = {
+                    //         t:cellValue._formulaType,
+                    //         ref:cellValue._fomulaRef,
+                    //         si:cellValue._formulaSi,
+                    //         fv:fv,
+                    //         cellValue:cellValue
+                    //     }
 
-                        if(cellValue._fomulaRef!=null){
-                            this.formulaRefList[cellValue._formulaSi]["mainRef"] = refValue;
-                        }
-                        else{
-                            this.formulaRefList[cellValue._formulaSi][cellValue.r+"_"+cellValue.c] = refValue;
-                        }
+                    //     if(cellValue._fomulaRef!=null){
+                    //         this.formulaRefList[cellValue._formulaSi]["mainRef"] = refValue;
+                    //     }
+                    //     else{
+                    //         this.formulaRefList[cellValue._formulaSi][cellValue.r+"_"+cellValue.c] = refValue;
+                    //     }
 
-                        // console.log(refValue, this.formulaRefList);
-                    }
+                    //     // console.log(refValue, this.formulaRefList);
+                    // }
 
                     //There may be formulas that do not appear in calcChain
-                    if(cellValue.v!=null && (cellValue.v as IluckySheetCelldataValue).f!=null){
-                        let formulaCell:IformulaListItem = {
-                            r:cellValue.r,
-                            c:cellValue.c
-                        }
-                        cellOtherInfo.formulaList["r"+cellValue.r+"c"+cellValue.c] = formulaCell;
-                    }
+                    // if(cellValue.v!=null && (cellValue.v as IluckySheetCelldataValue).f!=null){
+                    //     let formulaCell:IformulaListItem = {
+                    //         r:cellValue.r,
+                    //         c:cellValue.c
+                    //     }
+                    //     cellOtherInfo.formulaList["r"+cellValue.r+"c"+cellValue.c] = formulaCell;
+                    // }
 
                     this.celldata.push(cellValue);
                 }
                 
             }
         }
-
+        let cellOtherInfo:IcellOtherInfo = {};
         return cellOtherInfo;
     }
   

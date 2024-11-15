@@ -4,6 +4,8 @@ import { LuckyFile } from "./ToLuckySheet/LuckyFile";
 import {HandleZip} from './HandleZip';
 
 import {IuploadfileList} from "./ICommon";
+import { ILuckyFile } from "./ToLuckySheet/ILuck";
+
 import { fstat } from "fs";
 
 // //demo
@@ -102,20 +104,26 @@ import { fstat } from "fs";
 //     }
 // }
 // demoHandler();
-
 // api
 export class LuckyExcel{
     static transformExcelToLucky(excelFile: File,
-        callback?: (files: IuploadfileList, fs?: string) => void,
+        callBack?: (exportJson: ILuckyFile) => void,
         errorHandler?: (err: Error) => void) {
         let handleZip:HandleZip = new HandleZip(excelFile);
         
         handleZip.unzipFile(function (files: IuploadfileList) {
             let luckyFile = new LuckyFile(files, excelFile.name);
-            let luckysheetfile = luckyFile.Parse();
-            let exportJson = JSON.parse(luckysheetfile);
-            if (callback != undefined) {
-                callback(exportJson, luckysheetfile);
+            /** 
+             * 改动点: 原先代码，转json, 改后直接是json格式对外暴露
+                let luckysheetfile = luckyFile.Parse();
+                let exportJson = JSON.parse(luckysheetfile);
+                if(callBack != undefined){
+                    callBack(exportJson, luckysheetfile);
+                }
+            */
+            const exportJson = luckyFile.Parse();
+            if(callBack != undefined){
+                callBack(exportJson);
             }
         },
         function(err:Error){
@@ -130,15 +138,14 @@ export class LuckyExcel{
     static transformExcelToLuckyByUrl(
         url: string,
         name: string,
-        callBack?: (files: IuploadfileList, fs?: string) => void,
+        callBack?: (exportJson: ILuckyFile) => void,
         errorHandler?: (err: Error) => void) {
         let handleZip:HandleZip = new HandleZip();
         handleZip.unzipFileByUrl(url, function(files:IuploadfileList){
             let luckyFile = new LuckyFile(files, name);
-            let luckysheetfile = luckyFile.Parse();
-            let exportJson = JSON.parse(luckysheetfile);
+            const exportJson = luckyFile.Parse();
             if(callBack != undefined){
-                callBack(exportJson, luckysheetfile);
+                callBack(exportJson);
             }
         },
         function(err:Error){

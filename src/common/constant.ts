@@ -47,15 +47,15 @@ export let numFmtDefault:IattributeList = {
     "11": '0.00E+00',
     "12": '# ?/?',
     "13": '# ??/??',
-    "14": 'm/d/yy',
+    "14": 'yyyy/mm/dd',
     "15": 'd-mmm-yy',
     "16": 'd-mmm',
     "17": 'mmm-yy',
-    "18": 'h:mm AM/PM',
-    "19": 'h:mm:ss AM/PM',
-    "20": 'h:mm',
-    "21": 'h:mm:ss',
-    "22": 'm/d/yy h:mm',
+    "18": 'hh:mm AM/PM',
+    "19": 'hh:mm:ss AM/PM',
+    "20": 'hh:mm',
+    "21": 'hh:mm:ss',
+    "22": 'yyyy/mm/dd hh:mm',
     "37": '#,##0 ;(#,##0)',
     "38": '#,##0 ;[Red](#,##0)',
     "39": '#,##0.00;(#,##0.00)',
@@ -64,7 +64,8 @@ export let numFmtDefault:IattributeList = {
     "46": '[h]:mm:ss',
     "47": 'mmss.0',
     "48": '##0.0E+0',
-    "49": '@'
+    "49": '@',
+    "58": 'mm/dd'
 }
 
 export const indexedColors:IattributeList = {
